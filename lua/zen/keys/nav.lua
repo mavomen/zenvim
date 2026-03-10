@@ -1,0 +1,427 @@
+local cmd = vim.cmd
+local tbl_extend = vim.tbl_extend
+-- local validate = vim.validate
+local map = vim.keymap.set
+local opts = { noremap = true, silent = true }
+
+-- Movement / scrolling
+------------------------------------------------------------
+map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+
+map("n", "gg", "ggzt", { desc = "Go to top" })
+map("n", "<C-b>", "<C-b>zt", { desc = "Page up" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Half page up" })
+map("n", "<C-d>", "<C-d>zz", { desc = "Half page down" })
+map("n", "<C-f>", "<C-f>zb", { desc = "Page down" })
+map("n", "G", "GMztG", { desc = "Go to bottom" })
+
+-- Insert mode navigation
+------------------------------------------------------------
+map("i", "<C-h>", "<Left>", { desc = "Left" })
+map("i", "<C-j>", "<Down>", { desc = "Down" })
+map("i", "<C-k>", "<Up>", { desc = "Up" })
+map("i", "<C-l>", "<Right>", { desc = "Right" })
+
+map("i", "<C-w>", "<C-w>", { desc = "Delete word" })
+map("i", "<C-t>", "<C-t>", { desc = "Indent forward" })
+map("i", "<C-d>", "<C-d>", { desc = "Indent backward" })
+
+-- Visual mode
+------------------------------------------------------------
+map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+map("v", "<leader>/", "gc", { remap = true, desc = "Comment selection" })
+
+-- Search
+------------------------------------------------------------
+map("n", "n", "nzzzv", { desc = "Next result centered" })
+map("n", "N", "Nzzzv", { desc = "Prev result centered" })
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
+map("n", "<C-[>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
+
+-- Editing helpers
+------------------------------------------------------------
+map("n", "J", "mzJ`z", { desc = "Join lines without moving cursor" })
+map("n", "<C-A-S-p>", "mzyyP`zk", { desc = "Duplicate line" })
+
+-- Flash.nvim (lazy-safe)
+------------------------------------------------------------
+local function flash_map(lhs, fn, desc)
+	map({ "n", "x", "o" }, lhs, function()
+		local ok, flash = pcall(require, "flash")
+		if ok then
+			fn(flash)
+		else
+			vim.notify("flash.nvim not loaded", vim.log.levels.WARN)
+		end
+	end, { desc = desc })
+end
+
+flash_map("fjf", function(f)
+	f.jump()
+end, "Flash jump")
+flash_map("fjl", function(f)
+	f.jump({
+		search = { mode = "search", max_length = 0 },
+		label = { after = { 0, 0 } },
+		pattern = "^",
+	})
+end, "Flash line")
+flash_map(";;", function(f)
+	f.jump({ continue = true })
+end, "Flash continue")
+
+-- Multiplexer-aware window navigation
+------------------------------------------------------------
+local function has_cmd(name)
+	return vim.fn.exists(":" .. name) == 2
+end
+
+if has_cmd("NavigateLeft") then
+	map("n", "<A-h>", "<cmd>NavigateLeft<CR>", opts)
+	map("n", "<A-j>", "<cmd>NavigateDown<CR>", opts)
+	map("n", "<A-k>", "<cmd>NavigateUp<CR>", opts)
+	map("n", "<A-l>", "<cmd>NavigateRight<CR>", opts)
+else
+	map("n", "<A-h>", "<C-w>h", opts)
+	map("n", "<A-j>", "<C-w>j", opts)
+	map("n", "<A-k>", "<C-w>k", opts)
+	map("n", "<A-l>", "<C-w>l", opts)
+end
+
+-- Panes
+------------------------------------------------------------
+map("n", "<leader>;h", "<C-w>h", opts) -- Switch Window Left
+map("n", "<leader>;l", "<C-w>l", opts) -- Switch Window Right
+map("n", "<leader>;j", "<C-w>j", opts) -- Switch Window Down
+map("n", "<leader>;k", "<C-w>k", opts) -- Switch Window Up
+
+map("n", "<leader>;H", "<C-w>H", opts) -- Move Window to Left
+map("n", "<leader>;L", "<C-w>L", opts) -- Move Window to Right
+map("n", "<leader>;J", "<C-w>J", opts) -- Move Window to Down
+map("n", "<leader>;K", "<C-w>K", opts) -- Move Window to Up
+
+map("n", "<leader>sph", cmd.split, opts) -- split current window horizontally
+map("n", "<leader>spv", cmd.vsplit, opts) -- split current window vertically
+
+map("n", "<C-A-h>", ":vertical resize -1<CR>", opts)
+map("n", "<C-A-l>", ":vertical resize +1<CR>", opts)
+map("n", "<C-A-j>", ":resize -1<CR>", opts)
+map("n", "<C-A-k>", ":resize +1<CR>", opts)
+map("n", "<C-A-S-H>", ":vertical resize -5<CR>", opts)
+map("n", "<C-A-S-L>", ":vertical resize +5<CR>", opts)
+map("n", "<C-A-S-J>", ":resize -5<CR>", opts)
+map("n", "<C-A-S-K>", ":resize +5<CR>", opts)
+
+map("n", "<leader>T", "<C-w>T", opts) -- move current pane to a NEW tab
+
+-- Buffers
+------------------------------------------------------------
+map("n", "<leader>bb", function()
+	print(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+end, opts)
+map("n", "<leader>bl", cmd.ls, opts)
+map("n", "<leader>bn", cmd.bnext, opts)
+map("n", "<leader>bp", cmd.bprevious, opts)
+map("n", "<leader>bd", cmd.bdelete, opts)
+
+-- Tabs
+------------------------------------------------------------
+map("n", "<leader>tn", cmd.tabnew, opts) -- New tab
+map("n", "<leader>tc", cmd.tabclose, opts) -- Close current tab
+map("n", "<leader>to", cmd.tabonly, opts) -- Close all other tabs
+map("n", "<leader>tt", cmd.tabnext, opts) -- Next tab
+map("n", "<leader>tp", cmd.tabprevious, opts) -- Previous tab
+
+map("n", "<leader>g1", "1gt", opts) -- Go to tab 1
+map("n", "<leader>g2", "2gt", opts) -- Go to tab 2
+map("n", "<leader>g3", "3gt", opts) -- Go to tab 3
+map("n", "<leader>g4", "4gt", opts) -- Go to tab 4
+map("n", "<leader>g5", "5gt", opts) -- Go to tab 5
+map("n", "<leader>g6", "6gt", opts) -- Go to tab 6
+map("n", "<leader>g7", "7gt", opts) -- Go to tab 7
+map("n", "<leader>g8", "8gt", opts) -- Go to tab 8
+map("n", "<leader>g9", "9gt", opts) -- Go to tab 9
+map("n", "<leader>g0", cmd.tablast, opts) -- Go to last tab
+
+map("n", "<leader>tm", cmd.tabmove, opts) -- Move tab (will prompt for position)
+map("n", "<leader>t<", function()
+	cmd.tabmove("-1")
+end, opts) -- Move tab left
+map("n", "<leader>t>", function()
+	cmd.tabmove("+1")
+end, opts) -- Move tab right
+
+map("n", "<C-t>", cmd.tabnew, opts) -- Quick new tab
+
+map("n", "<leader>ti", cmd.tabs, opts) -- List all tabs
+map("n", "<leader>tb", function()
+	cmd("tab split")
+end, opts) -- Open current buffer in new tab
+
+-- Foldings
+------------------------------------------------------------
+-- Basic folding
+map("n", "<leader>zff", "zf", { desc = "Create fold" })
+map("v", "<leader>zff", "zf", { desc = "Create fold from selection" })
+map("n", "<leader>zd", "zd", { desc = "Delete fold under cursor" })
+map("n", "<leader>zD", "zD", { desc = "Delete all folds in current line" })
+map("n", "<leader>zE", "zE", { desc = "Eliminate all folds" })
+
+-- Opening folds
+map("n", "zo", "zo", { desc = "Open fold under cursor" })
+map("n", "zO", "zO", { desc = "Open all folds under cursor" })
+map("n", "zc", "zc", { desc = "Close fold under cursor" })
+map("n", "zC", "zC", { desc = "Close all folds under cursor" })
+map("n", "za", "za", { desc = "Toggle fold under cursor" })
+map("n", "zA", "zA", { desc = "Toggle all folds under cursor" })
+
+-- Global fold operations
+map("n", "zr", "zr", { desc = "Reduce fold level (open one level)" })
+map("n", "zR", "zR", { desc = "Open all folds" })
+map("n", "zm", "zm", { desc = "Fold more (close one level)" })
+map("n", "zM", "zM", { desc = "Close all folds" })
+
+-- Fold navigation
+map("n", "zj", "zj", { desc = "Move to next fold" })
+map("n", "zk", "zk", { desc = "Move to previous fold" })
+map("n", "[z", "[z", { desc = "Move to start of current fold" })
+map("n", "]z", "]z", { desc = "Move to end of current fold" })
+
+-- Fold view operations
+map("n", "zv", "zv", { desc = "View cursor line (open folds)" })
+map("n", "zx", "zx", { desc = "Update folds" })
+map("n", "zX", "zX", { desc = "Undo manually opened/closed folds" })
+
+-- Fold level operations
+map("n", "z1", function()
+	opt.foldlevel = 1
+end, { desc = "Set fold level to 1" })
+map("n", "z2", function()
+	opt.foldlevel = 2
+end, { desc = "Set fold level to 2" })
+map("n", "z3", function()
+	opt.foldlevel = 3
+end, { desc = "Set fold level to 3" })
+map("n", "z4", function()
+	opt.foldlevel = 4
+end, { desc = "Set fold level to 4" })
+map("n", "z5", function()
+	opt.foldlevel = 5
+end, { desc = "Set fold level to 5" })
+map("n", "z6", function()
+	opt.foldlevel = 6
+end, { desc = "Set fold level to 6" })
+map("n", "z7", function()
+	opt.foldlevel = 7
+end, { desc = "Set fold level to 7" })
+map("n", "z8", function()
+	opt.foldlevel = 8
+end, { desc = "Set fold level to 8" })
+map("n", "z9", function()
+	opt.foldlevel = 9
+end, { desc = "Set fold level to 9" })
+map("n", "z0", function()
+	opt.foldlevel = 0
+end, { desc = "Set fold level to 0" })
+
+-- Quick fold level adjustments
+map("n", "<leader>z+", "zr", { desc = "Reduce fold level (open one level)" })
+map("n", "<leader>z-", "zm", { desc = "Fold more (close one level)" })
+map("n", "<leader>zR", "zR", { desc = "Open all folds" })
+map("n", "<leader>zM", "zM", { desc = "Close all folds" })
+
+-- Fold method switching
+map("n", "<leader>zme", function()
+	opt.foldmethod = "expr"
+end, { desc = "Set fold method to expr" })
+map("n", "<leader>zmi", function()
+	opt.foldmethod = "indent"
+end, { desc = "Set fold method to indent" })
+map("n", "<leader>zms", function()
+	opt.foldmethod = "syntax"
+end, { desc = "Set fold method to syntax" })
+map("n", "<leader>zmm", function()
+	opt.foldmethod = "manual"
+end, { desc = "Set fold method to manual" })
+map("n", "<leader>zmk", function()
+	opt.foldmethod = "marker"
+end, { desc = "Set fold method to marker" })
+map("n", "<leader>zmd", function()
+	opt.foldmethod = "diff"
+end, { desc = "Set fold method to diff" })
+
+-- Toggle fold column
+map("n", "<leader>zfc", function()
+	---@diagnostic disable-next-line: undefined-field
+	local current = vim.opt.foldcolumn:get()
+	if current == "0" then
+		vim.opt.foldcolumn = "4"
+		vim.notify("Fold column enabled")
+	else
+		vim.opt.foldcolumn = "0"
+		vim.notify("Fold column disabled")
+	end
+end, { desc = "Toggle fold column" })
+
+-- Show fold info
+map("n", "<leader>zi", function()
+	local foldlevel = vim.opt.foldlevel:get()
+	local foldmethod = vim.opt.foldmethod:get()
+	---@diagnostic disable-next-line: undefined-field
+	local foldcolumn = vim.opt.foldcolumn:get()
+	---@diagnostic disable-next-line: undefined-field
+	local foldenable = vim.opt.foldenable:get()
+
+	local info = string.format(
+		"Fold Info:\n• Method: %s\n• Level: %d\n• Column: %s\n• Enabled: %s",
+		foldmethod,
+		foldlevel,
+		foldcolumn,
+		foldenable and "Yes" or "No"
+	)
+	vim.notify(info)
+end, { desc = "Show fold info" })
+
+-- Toggle folding on/off
+map("n", "<leader>zt", function()
+	vim.opt.foldenable = not vim.opt.foldenable:get()
+	---@diagnostic disable-next-line: undefined-field
+	local status = vim.opt.foldenable:get() and "enabled" or "disabled"
+	vim.notify("Folding " .. status)
+end, { desc = "Toggle folding" })
+
+-- Save and restore fold state
+map("n", "<leader>zs", function()
+	cmd("mkview")
+	vim.notify("Fold state saved")
+end, { desc = "Save fold state" })
+
+map("n", "<leader>zl", function()
+	cmd("loadview")
+	vim.notify("Fold state loaded")
+end, { desc = "Load fold state" })
+
+-- Markings
+------------------------------------------------------------
+-- Set marks (default: m{a-zA-Z})
+-- m{a-z} - file-local marks
+-- m{A-Z} - global marks (across files)
+-- These are native and don't need remapping
+
+-- Jump to marks (default: '{mark} and `{mark})
+-- '{mark} - jump to line of mark
+-- `{mark} - jump to exact position (line and column)
+-- These are native and don't need remapping
+
+-- Quick mark navigation
+map("n", "<leader>m", "", { desc = "Mark operations" })
+
+-- Set commonly used marks with descriptive names
+-- map("n", "<leader>mm", "mM", tbl_extend("force", opts, { desc = "Set mark M (Main)" }))
+-- map("n", "<leader>mt", "mT", tbl_extend("force", opts, { desc = "Set mark T (Top)" }))
+-- map("n", "<leader>mb", "mB", tbl_extend("force", opts, { desc = "Set mark B (Bottom)" }))
+-- map("n", "<leader>ms", "mS", tbl_extend("force", opts, { desc = "Set mark S (Section)" }))
+-- map("n", "<leader>mf", "mF", tbl_extend("force", opts, { desc = "Set mark F (Function)" }))
+--
+-- -- Quick jump to commonly used marks
+-- map("n", "<leader>jm", "'M", tbl_extend("force", opts, { desc = "Jump to mark M" }))
+-- map("n", "<leader>jt", "'T", tbl_extend("force", opts, { desc = "Jump to mark T" }))
+-- map("n", "<leader>jb", "'B", tbl_extend("force", opts, { desc = "Jump to mark B" }))
+-- map("n", "<leader>js", "'S", tbl_extend("force", opts, { desc = "Jump to mark S" }))
+-- map("n", "<leader>jf", "'F", tbl_extend("force", opts, { desc = "Jump to mark F" }))
+--
+-- -- Jump to exact position of marks
+-- map("n", "<leader>gm", "`M", tbl_extend("force", opts, { desc = "Go to mark M (exact)" }))
+-- map("n", "<leader>gt", "`T", tbl_extend("force", opts, { desc = "Go to mark T (exact)" }))
+-- map("n", "<leader>gb", "`B", tbl_extend("force", opts, { desc = "Go to mark B (exact)" }))
+-- map("n", "<leader>gs", "`S", tbl_extend("force", opts, { desc = "Go to mark S (exact)" }))
+-- map("n", "<leader>gf", "`F", tbl_extend("force", opts, { desc = "Go to mark F (exact)" }))
+
+-- MARK MANAGEMENT
+-- ============================================================================
+-- List all marks
+map("n", "<leader>ml", cmd.marks, tbl_extend("force", opts, { desc = "List all marks" }))
+
+-- Delete marks
+map("n", "<leader>md", cmd.delmarks, { desc = "Delete marks (specify which)" })
+map("n", "<leader>mD", function()
+	cmd("delmarks!")
+end, opts, { desc = "Delete all lowercase marks" })
+
+-- Clear specific mark ranges
+map("n", "<leader>mCa", function()
+	cmd("delmarks a-z")
+end, opts, { desc = "Clear all local marks" })
+map("n", "<leader>mCA", function()
+	cmd("delmarks A-Z")
+end, opts, { desc = "Clear all global marks" })
+map("n", "<leader>mC0", function()
+	cmd("delmarks 0-9")
+end, opts, { desc = "Clear all numbered marks" })
+
+-- automatics; don't need maps; documented for reference:
+-- ` - position before latest jump
+-- ' - position before latest jump (line only)
+-- " - position when last exiting current buffer
+-- ^ - position of last insertion
+-- . - position of last change
+-- [ - start of last change or yank
+-- ] - end of last change or yank
+-- < - start of last visual selection
+-- > - end of last visual selection
+
+-- Enhanced navigation for automatic marks
+map("n", "<leader>j`", "``", tbl_extend("force", opts, { desc = "Jump to last jump position" }))
+map("n", "<leader>j'", "''", tbl_extend("force", opts, { desc = "Jump to last jump line" }))
+map("n", '<leader>j"', '`"', tbl_extend("force", opts, { desc = "Jump to last exit position" }))
+map("n", "<leader>j^", "`^", tbl_extend("force", opts, { desc = "Jump to last insert position" }))
+map("n", "<leader>j.", "`.", tbl_extend("force", opts, { desc = "Jump to last change position" }))
+map("n", "<leader>j[", "`[", tbl_extend("force", opts, { desc = "Jump to change/yank start" }))
+map("n", "<leader>j]", "`]", tbl_extend("force", opts, { desc = "Jump to change/yank end" }))
+map("n", "<leader>j<", "`<", tbl_extend("force", opts, { desc = "Jump to visual selection start" }))
+map("n", "<leader>j>", "`>", tbl_extend("force", opts, { desc = "Jump to visual selection end" }))
+
+-- Jump list navigation (enhanced)
+map("n", "<C-o>", "<C-o>", tbl_extend("force", opts, { desc = "Jump to older position" }))
+map("n", "<C-i>", "<C-i>", tbl_extend("force", opts, { desc = "Jump to newer position" }))
+map("n", "<leader>jo", cmd.jumps, tbl_extend("force", opts, { desc = "Show jump list" }))
+
+-- Change list navigation
+map("n", "g;", "g;", tbl_extend("force", opts, { desc = "Go to older change" }))
+map("n", "g,", "g,", tbl_extend("force", opts, { desc = "Go to newer change" }))
+map("n", "<leader>jc", cmd.changes, tbl_extend("force", opts, { desc = "Show change list" }))
+
+-- numbered marks (0-9) - for recent files
+-- Note: Numbered marks 0-9 are automatically set by Vim:
+-- 0 - position when Vim was last exited
+-- 1-9 - positions when files were last exited
+-- These don't need maps but can be jumped to with '0-'9
+-- Quick access to recent file positions
+map("n", "<leader>j0", "'0", tbl_extend("force", opts, { desc = "Jump to last exit position" }))
+map("n", "<leader>j1", "'1", tbl_extend("force", opts, { desc = "Jump to recent file 1" }))
+map("n", "<leader>j2", "'2", tbl_extend("force", opts, { desc = "Jump to recent file 2" }))
+map("n", "<leader>j3", "'3", tbl_extend("force", opts, { desc = "Jump to recent file 3" }))
+
+-- Mark the current position before big operations
+map("n", "<leader>m.", "m.", tbl_extend("force", opts, { desc = "Mark current position" }))
+map("n", "<leader>j.", "'.", tbl_extend("force", opts, { desc = "Return to marked position" }))
+
+-- Mark and return pattern
+map("n", "<leader>mr", "m'", tbl_extend("force", opts, { desc = "Mark for return" }))
+map("n", "<leader>jr", "''", tbl_extend("force", opts, { desc = "Return to mark" }))
+
+-- Save position before search
+map("n", "/", "m'/", tbl_extend("force", opts, { desc = "Search (mark position)" }))
+map("n", "?", "m'?", tbl_extend("force", opts, { desc = "Search backwards (mark position)" }))
+
+-- If using telescope.nvim, you might want these
+map("n", "<leader>fm", function()
+	cmd("Telescope marks")
+end, { desc = "Find marks with Telescope" })
+
+-- useful commands
+vim.api.nvim_create_user_command("ShowMarks", "marks", { desc = "Show all marks" })
+vim.api.nvim_create_user_command("ClearMarks", "delmarks a-z", { desc = "Clear all local marks" })
+vim.api.nvim_create_user_command("ClearAllMarks", "delmarks!", { desc = "Clear all marks" })
