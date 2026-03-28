@@ -1,0 +1,8 @@
+{
+  "diagnostics.globals": [
+    "vim",
+    "settings",
+    "undefined-global",
+    "ts_ls_settings"
+  ]
+}
