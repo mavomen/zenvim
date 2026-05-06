@@ -5,18 +5,38 @@ return {
 		require("lualine").setup({
 			options = {
 				theme = "auto",
-			},
-			options = {
 				component_separators = { left = "", right = "" },
 				section_separators = { left = "", right = "" },
 			},
 
 			sections = {
-				lualine_a = { "branch", "diff" },
-				lualine_b = { "diagnostics" },
+				lualine_a = { "branch" },
+				lualine_b = {
+					{
+						"diagnostics",
+						sources = { "nvim_diagnostic" },
+						symbols = {
+							error = "󰯈 ",
+							warn = " ",
+							info = " ",
+							hint = " ",
+						},
+						always_visible = true,
+					},
+				},
 				lualine_c = {},
-				lualine_x = { "filetype" },
-				lualine_y = { "location", "mode" },
+				lualine_x = {
+					{
+						-- "filetype",
+						-- icon_only = true,
+						-- icon = false,
+						-- colored = false,
+						function()
+							return vim.bo.filetype
+						end,
+					},
+				},
+				lualine_y = { "location" },
 				lualine_z = { "progress" },
 			},
 
@@ -30,11 +50,11 @@ return {
 			},
 
 			tabline = {
-				lualine_a = { "tabs", "filename" },
-				lualine_b = {},
+				lualine_a = { "tabs" },
+				lualine_b = { "filename" },
 				lualine_c = {},
 				lualine_x = {},
-				lualine_y = {},
+				lualine_y = { "diff" },
 				lualine_z = {},
 			},
 
