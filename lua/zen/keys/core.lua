@@ -83,11 +83,14 @@ end
 ------------------------------------------------------------
 map("n", "<leader>;w", function()
 	vim.cmd("wall")
-	if vim.bo.filetype == "lua" then
+	local filetype = vim.bo.filetype
+	if filetype == "lua" then
 		vim.cmd("source %")
+		vim.notify(" 󱓎 ", vim.log.levels.INFO)
+	else
+		vim.notify(" 󱓎 ", vim.log.levels.INFO)
 	end
 	vim.cmd("mkview")
-	vim.notify("Saved", vim.log.levels.INFO)
-end, { desc = "Save all (source lua)" })
+end, { desc = "Save all; source if Lua" })
 
 map("n", "<leader>;z", "ZZ", opts)
