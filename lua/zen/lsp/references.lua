@@ -23,7 +23,7 @@ local function is_cache_valid(key)
 	if not entry then
 		return false
 	end
-	return (vim.loop.now() - entry.time) < (cache_ttl * 1000)
+	return (vim.uv.now() - entry.time) < (cache_ttl * 1000)
 end
 
 local function detect_package(filepath)
@@ -191,7 +191,7 @@ function M.find_references(opts)
 			end
 		end
 
-		cache[cache_key] = { refs = unique, time = vim.loop.now() }
+		cache[cache_key] = { refs = unique, time = vim.uv.now() }
 
 		vim.schedule(function()
 			show_telescope(unique, string.format("References (%d found)", #unique))

@@ -14,7 +14,7 @@ map("n", "<C-b>", "<C-b>zt", { desc = "Page up" })
 map("n", "<C-u>", "<C-u>zz", { desc = "Half page up" })
 map("n", "<C-d>", "<C-d>zz", { desc = "Half page down" })
 map("n", "<C-f>", "<C-f>zb", { desc = "Page down" })
-map("n", "G", "GMztG", { desc = "Go to bottom" })
+map("n", "G", "Gzz", { desc = "Go to bottom" })
 
 -- Insert mode navigation
 ------------------------------------------------------------
@@ -348,18 +348,18 @@ map("n", "<leader>ml", cmd.marks, tbl_extend("force", opts, { desc = "List all m
 map("n", "<leader>md", cmd.delmarks, { desc = "Delete marks (specify which)" })
 map("n", "<leader>mD", function()
 	cmd("delmarks!")
-end, opts, { desc = "Delete all lowercase marks" })
+end, tbl_extend("force", opts, { desc = "Delete all lowercase marks" }))
 
 -- Clear specific mark ranges
 map("n", "<leader>mCa", function()
 	cmd("delmarks a-z")
-end, opts, { desc = "Clear all local marks" })
+end, tbl_extend("force", opts, { desc = "Clear all local marks" }))
 map("n", "<leader>mCA", function()
 	cmd("delmarks A-Z")
-end, opts, { desc = "Clear all global marks" })
+end, tbl_extend("force", opts, { desc = "Clear all global marks" }))
 map("n", "<leader>mC0", function()
 	cmd("delmarks 0-9")
-end, opts, { desc = "Clear all numbered marks" })
+end, tbl_extend("force", opts, { desc = "Clear all numbered marks" }))
 
 -- automatics; don't need maps; documented for reference:
 -- ` - position before latest jump

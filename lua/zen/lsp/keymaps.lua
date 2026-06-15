@@ -148,9 +148,22 @@ function M.setup()
 	map_if_absent("n", "<leader>lT", ":LspToggleGlobal<CR>", { desc = "Toggle all dynamic LSP servers" })
 
 	-- ── new: global LSP management ────────────────────────────────
-	map_if_absent("n", "<leader>lR", ":LspRestart<CR>", { desc = "Restart all LSP servers" })
-	map_if_absent("n", "<leader>lS", ":LspStop<CR>", { desc = "Stop all LSP servers" })
-	map_if_absent("n", "<leader>lA", ":LspStart<CR>", { desc = "Start LSP servers" })
+	map_if_absent("n", "<leader>lR", function()
+		for _, client in ipairs(vim.lsp.get_clients()) do
+			client:stop()
+		end
+		vim.defer_fn(function()
+			vim.cmd("doautocmd FileType " .. vim.bo.filetype)
+		end, 300)
+	end, { desc = "Restart all LSP servers" })
+	map_if_absent("n", "<leader>lS", function()
+		for _, client in ipairs(vim.lsp.get_clients()) do
+			client:stop()
+		end
+	end, { desc = "Stop all LSP servers" })
+	map_if_absent("n", "<leader>lA", function()
+		vim.cmd("doautocmd FileType " .. vim.bo.filetype)
+	end, { desc = "Start LSP servers" })
 
 	map_if_absent("n", "<leader>lHH", function()
 		vim.cmd("checkhealth lspconfig")
@@ -494,8 +507,17 @@ function M.setup()
 				})
 			end, o("Open LSP log"))
 			map_if_absent("n", "<leader>lth", buff.typehierarchy, o("Type hierarchy"))
-			map_if_absent("n", "<leader>lo", ":AerialToggle!<CR>", o("Toggle outline"))
-			map_if_absent("n", "<leader>tc", ":Coverage<CR>", o("Toggle coverage"))
+			map_if_absent("n", "<leader>lo", function()
+				local ok = pcall(require, "aerial")
+				if ok then
+					require("aerial").toggle()
+				else
+					vim.notify("aerial.nvim not installed", vim.log.levels.WARN)
+				end
+			end, o("Toggle outline"))
+			map_if_absent("n", "<leader>tc", function()
+				vim.notify("No coverage plugin installed", vim.log.levels.WARN)
+			end, o("Toggle coverage"))
 			map_if_absent("n", "<leader>lx", ":LspToggleCurrent<CR>", o("Toggle dynamic LSP for this filetype"))
 
 			-- ── unchanged: SQL dialect maps ───────────────────────
@@ -554,9 +576,6 @@ function M.setup()
 			map_if_absent("n", "<leader>glb", function()
 				vim.lsp.buf.format({
 					async = false,
-					filter = function(client)
-						return client.name == "null-ls"
-					end,
 				})
 				vim.lsp.buf.code_action({
 					context = {

@@ -26,56 +26,6 @@ function M.setup(map, with_db)
 		end)
 	end, { desc = "Quick Connect to DB" })
 
-	map("n", "<leader>ss", function()
-		local line = vim.api.nvim_get_current_line()
-		if line == "" then
-			vim.notify("Empty line - nothing to execute", vim.log.levels.WARN)
-			return
-		end
-		with_db(function(db)
-			vim.cmd("." .. "DB " .. vim.fn.fnameescape(db))
-		end)
-	end, { desc = "Execute SQL line" })
-
-	map("v", "<leader>ss", function()
-		local start = vim.fn.getpos("'<")[2]
-		local finish = vim.fn.getpos("'>")[2]
-		local lines = vim.api.nvim_buf_get_lines(0, start - 1, finish, false)
-		local query = table.concat(lines, "\n")
-		if query == "" then
-			vim.notify("Empty selection - nothing to execute", vim.log.levels.WARN)
-			return
-		end
-		with_db(function(db)
-			vim.cmd("'<,'>" .. "DB " .. vim.fn.fnameescape(db))
-		end)
-	end, { desc = "Execute SQL selection" })
-
-	map("n", "<leader>sf", function()
-		local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-		local query = table.concat(lines, "\n")
-		if query == "" then
-			vim.notify("Empty buffer - nothing to execute", vim.log.levels.WARN)
-			return
-		end
-		with_db(function(db)
-			vim.cmd("%" .. "DB " .. vim.fn.fnameescape(db))
-		end)
-	end, { desc = "Execute entire SQL file" })
-
-	map("n", "<leader>sx", function()
-		vim.cmd("w")
-		local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-		local query = table.concat(lines, "\n")
-		if query == "" then
-			vim.notify("Empty buffer - nothing to execute", vim.log.levels.WARN)
-			return
-		end
-		with_db(function(db)
-			vim.cmd("%" .. "DB " .. vim.fn.fnameescape(db))
-		end)
-	end, { desc = "Save and execute SQL file" })
-
 	local dbui = {
 		["<CR>"] = "<Plug>(DBUI_SelectLine)",
 		["o"] = "<Plug>(DBUI_SelectLine)",
@@ -141,6 +91,56 @@ function M.setup(map, with_db)
 					vim.cmd("%" .. "DB " .. vim.fn.fnameescape(db))
 				end)
 			end, vim.tbl_extend("force", opts, { desc = "Execute entire buffer" }))
+
+			vim.keymap.set("n", "<leader>ss", function()
+				local line = vim.api.nvim_get_current_line()
+				if line == "" then
+					vim.notify("Empty line - nothing to execute", vim.log.levels.WARN)
+					return
+				end
+				with_db(function(db)
+					vim.cmd("." .. "DB " .. vim.fn.fnameescape(db))
+				end)
+			end, vim.tbl_extend("force", opts, { desc = "Execute SQL line" }))
+
+			vim.keymap.set("v", "<leader>ss", function()
+				local start = vim.fn.getpos("'<")[2]
+				local finish = vim.fn.getpos("'>")[2]
+				local lines = vim.api.nvim_buf_get_lines(0, start - 1, finish, false)
+				local query = table.concat(lines, "\n")
+				if query == "" then
+					vim.notify("Empty selection - nothing to execute", vim.log.levels.WARN)
+					return
+				end
+				with_db(function(db)
+					vim.cmd("'<,'>" .. "DB " .. vim.fn.fnameescape(db))
+				end)
+			end, vim.tbl_extend("force", opts, { desc = "Execute SQL selection" }))
+
+			vim.keymap.set("n", "<leader>sf", function()
+				local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+				local query = table.concat(lines, "\n")
+				if query == "" then
+					vim.notify("Empty buffer - nothing to execute", vim.log.levels.WARN)
+					return
+				end
+				with_db(function(db)
+					vim.cmd("%" .. "DB " .. vim.fn.fnameescape(db))
+				end)
+			end, vim.tbl_extend("force", opts, { desc = "Execute entire SQL file" }))
+
+			vim.keymap.set("n", "<leader>sx", function()
+				vim.cmd("w")
+				local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+				local query = table.concat(lines, "\n")
+				if query == "" then
+					vim.notify("Empty buffer - nothing to execute", vim.log.levels.WARN)
+					return
+				end
+				with_db(function(db)
+					vim.cmd("%" .. "DB " .. vim.fn.fnameescape(db))
+				end)
+			end, vim.tbl_extend("force", opts, { desc = "Save and execute SQL file" }))
 
 			vim.keymap.set("n", "<localleader>h", function()
 				local w = vim.fn.expand("<cword>")

@@ -4,7 +4,6 @@ local M = {}
 
 -- Basic options, minimal but sane
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
 
 local opt = vim.opt
 

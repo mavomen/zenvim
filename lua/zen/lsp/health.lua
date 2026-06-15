@@ -128,7 +128,7 @@ local function get_server_status(name)
 		return "running", c
 	end
 
-	local active = dynamic.active[name]
+	local active = dynamic.active and dynamic.active[name]
 	if active then
 		return "idle", nil
 	end
@@ -196,7 +196,7 @@ function M.render()
 
 	-- summary bar
 	local running_count = #vim.lsp.get_clients()
-	local reg_count = vim.tbl_count(dynamic.registry)
+	local reg_count = #vim.tbl_keys(dynamic.registry)
 	local err_count = 0
 	for _, errs in pairs(M.errors) do
 		for _, e in ipairs(errs) do
@@ -211,8 +211,7 @@ function M.render()
 		running_count,
 		reg_count,
 		err_count,
-		dynamic.workspace_cache
-				and next(dynamic.workspace_cache)
+		(dynamic.workspace_cache and next(dynamic.workspace_cache))
 				and (function()
 					for _, v in pairs(dynamic.workspace_cache) do
 						return table.concat(v.profiles or {}, ", ")
@@ -241,6 +240,7 @@ function M.render()
 	local groups = { running = {}, error = {}, idle = {}, stopped = {} }
 	for _, name in ipairs(sorted) do
 		local st = get_server_status(name)
+		if not groups[st] then groups[st] = {} end
 		table.insert(groups[st], name)
 	end
 
@@ -282,7 +282,7 @@ function M.render()
 
 			for _, name in ipairs(members) do
 				local status, client = get_server_status(name)
-				local active = dynamic.active[name]
+	local active = dynamic.active and dynamic.active[name]
 				local reg = dynamic.registry[name]
 				local lat = M.latency[name]
 

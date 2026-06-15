@@ -10,6 +10,12 @@ local M = {}
 --- @type table<string, DynamicServerConfig>
 M.registry = {}
 
+--- @type table<string, { last_used: number, profiles?: string[] }>
+M.active = {}
+
+--- @type table<string, table>
+M.workspace_cache = {}
+
 local required_fields = { "filetypes" }
 
 --- Validate config structure.
@@ -118,6 +124,27 @@ end
 --- @return DynamicServerConfig|nil
 function M.get(server_name)
 	return M.registry[server_name]
+end
+
+--- Try to spawn a server for a given buffer.
+--- @param server_name string
+--- @param bufnr integer
+function M.try_spawn(server_name, bufnr)
+	local cfg = M.registry[server_name]
+	if not cfg then
+		vim.notify(string.format("[LSP Dynamic] '%s' not registered", server_name), vim.log.levels.WARN)
+		return false
+	end
+
+	local clients = vim.lsp.get_clients({ name = server_name, bufnr = bufnr })
+	if #clients > 0 then
+		return true
+	end
+
+	local capabilities = require("zen.lsp.shared").capabilities
+	activate(server_name, cfg, capabilities)
+	M.active[server_name] = { last_used = os.time() }
+	return true
 end
 
 --- Check if a server is registered.

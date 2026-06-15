@@ -29,7 +29,7 @@ return {
 			"mason-lspconfig.nvim",
 		},
 		config = function()
-			require("zen.lsp.lspconfig")
+						require("zen.lsp.lspconfig")
 		end,
 	},
 }

@@ -56,9 +56,6 @@ else
 end
 
 -- Global wrapping defaults + per-window toggle
-opt_local.wrap = false -- do not soft-wrap long lines by default
-opt_local.linebreak = false -- don't wrap at word boundaries by default
-opt_local.textwidth = 120 -- recommended text width for formatting
 opt_local.colorcolumn = "" -- no static colorcolumn marker by default
 
 -- Buffer Wrap

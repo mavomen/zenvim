@@ -18,14 +18,14 @@ map("n", "<leader>dl", dap.run_last, { desc = "Run Last Debug" })
 
 map("n", "<leader>du", dapui.toggle, { desc = "Toggle DAP UI" })
 
-map("n", "<leader>dn", function()
-	require("dap-python").test_method()
-end)
+local function dap_python_safe(fn)
+	return function()
+		pcall(function()
+			require("dap-python")[fn]()
+		end)
+	end
+end
 
-map("n", "<leader>df", function()
-	require("dap-python").test_class()
-end)
-
-map("v", "<leader>ds", function()
-	require("dap-python").debug_selection()
-end)
+map("n", "<leader>dn", dap_python_safe("test_method"), { desc = "Debug nearest Python test method" })
+map("n", "<leader>df", dap_python_safe("test_class"), { desc = "Debug nearest Python test class" })
+map("v", "<leader>ds", dap_python_safe("debug_selection"), { desc = "Debug Python selection" })

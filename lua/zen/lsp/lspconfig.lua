@@ -15,6 +15,12 @@ local servers = {
 	"jsonls",
 	"texlab",
 	"yamlls",
+
+	"sqlls",
+	"sqls",
+	"postgres_lsp",
+	"flux_lsp",
+	"sql",
 }
 
 -- Registry of loaded extenders
