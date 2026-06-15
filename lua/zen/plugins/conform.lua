@@ -45,22 +45,6 @@ return {
 			sh = { "shfmt" },
 		},
 
-		formatters = {
-			black = {
-				command = "/usr/bin/black",
-			},
-			isort = {
-				command = "/usr/bin/isort",
-			},
-			prettier = {
-				command = "prettier",
-			},
-			rustfmt = {
-				command = "rustfmt",
-				stdin = true,
-			},
-		},
-
 		format_on_save = function(bufnr)
 			if vim.api.nvim_buf_line_count(bufnr) > 5000 then
 				return

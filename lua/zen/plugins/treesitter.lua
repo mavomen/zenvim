@@ -3,6 +3,7 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		event = { "BufReadPost", "BufNewFile" },
+		dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
 		opts = {
 			ensure_installed = {
 				"lua",
@@ -58,22 +59,36 @@ return {
 				enable = true,
 			},
 
-			playground = {
+playground = {
+			enable = true,
+			disable = {},
+			updatetime = 25,
+			persist_queries = false,
+			keybindings = {
+				toggle_query_editor = "o",
+				toggle_hl_groups = "i",
+				toggle_injected_languages = "t",
+				toggle_anonymous_nodes = "a",
+				toggle_language_display = "I",
+				focus_language = "f",
+				unfocus_language = "F",
+				update = "R",
+				goto_node = "<cr>",
+				show_help = "?",
+			},
+		},
+
+			context_commentstring = {
 				enable = true,
-				disable = {},
-				updatetime = 25,
-				persist_queries = false,
-				keybindings = {
-					toggle_query_editor = "o",
-					toggle_hl_groups = "i",
-					toggle_injected_languages = "t",
-					toggle_anonymous_nodes = "a",
-					toggle_language_display = "I",
-					focus_language = "f",
-					unfocus_language = "F",
-					update = "R",
-					goto_node = "<cr>",
-					show_help = "?",
+				enable_autocmd = false,
+				config = {
+					typescript = "// %s",
+					css = "/* %s */",
+					scss = "/* %s */",
+					html = "<!-- %s -->",
+					svelte = "<!-- %s -->",
+					vue = "<!-- %s -->",
+					json = {},
 				},
 			},
 
@@ -90,17 +105,6 @@ return {
 						["ia"] = "@parameter.inner",
 					},
 				},
-
-				swap = {
-					enable = true,
-					swap_next = {
-						["<leader>a"] = "@parameter.inner",
-					},
-					swap_previous = {
-						["<leader>A"] = "@parameter.inner",
-					},
-				},
-
 				move = {
 					enable = true,
 					set_jumps = true,
@@ -121,19 +125,14 @@ return {
 						["[]"] = "@class.outer",
 					},
 				},
-			},
-
-			context_commentstring = {
-				enable = true,
-				enable_autocmd = false,
-				config = {
-					typescript = "// %s",
-					css = "/* %s */",
-					scss = "/* %s */",
-					html = "<!-- %s -->",
-					svelte = "<!-- %s -->",
-					vue = "<!-- %s -->",
-					json = {},
+				swap = {
+					enable = true,
+					swap_next = {
+						["<leader>a"] = "@parameter.inner",
+					},
+					swap_previous = {
+						["<leader>A"] = "@parameter.inner",
+					},
 				},
 			},
 		},

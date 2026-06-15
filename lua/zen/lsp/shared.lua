@@ -30,17 +30,6 @@ capabilities.textDocument.hover = {
 
 M.capabilities = capabilities
 
-local util_ok, util = pcall(require, "lspconfig.util")
-if not util_ok then
-	util = require("lspconfig.util.init")
-end
-
-function M.find_monorepo_root(fname)
-	return util.root_pattern("pnpm-workspace.yaml", "lerna.json", "nx.json", "turbo.json", "package.json", ".git")(
-		fname
-	)
-end
-
 -- UI guard: prevent LSP start in headless/non-interactive environments
 function M.should_start_server()
 	return #vim.api.nvim_list_uis() > 0
