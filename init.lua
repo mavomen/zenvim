@@ -15,5 +15,3 @@ require("zen")
 require("lazy").setup({
 	{ import = "zen.plugins" },
 })
-
-vim.cmd.colorscheme("kanagawa-paper-crimson")

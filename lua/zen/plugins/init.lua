@@ -1,3 +1,3 @@
 return {
-	-- { import = "zen.plugins.flash" },
+	{ import = "zen.plugins.bufremove" },
 }

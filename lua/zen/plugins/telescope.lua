@@ -20,8 +20,13 @@ return {
 			{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
 			{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
 			{ "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
-			{ "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
+			{ "<leader>fm", "<cmd>Telescope marks<cr>", desc = "Marks" },
 			{ "<leader>fs", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
+			{
+				"<leader><leader>",
+				"<cmd>Telescope buffers sort_mru=true sort_lastused=true initial_mode=normal<cr>",
+				desc = "[ ] Find buffers",
+			},
 		},
 		config = function()
 			local telescope = require("telescope")

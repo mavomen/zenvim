@@ -36,7 +36,7 @@ vim.api.nvim_create_autocmd("User", {
 
 			-- Vim pickers
 			map("n", "<leader>fk", builtin.keymaps, { desc = "Find keymaps" })
-			map("n", "<leader>fo", builtin.vim_options, { desc = "Vim options" })
+			map("n", "<leader>fo", builtin.highlights, { desc = "Highlight groups" })
 			map("n", "<leader>ft", builtin.filetypes, { desc = "File types" })
 			map("n", "<leader>fq", builtin.quickfix, { desc = "Quickfix list" })
 			map("n", "<leader>fl", builtin.loclist, { desc = "Location list" })
@@ -67,10 +67,6 @@ vim.api.nvim_create_autocmd("User", {
 			map("n", "<leader>sn", function()
 				builtin.find_files({ cwd = vim.fn.stdpath("config") })
 			end, { desc = "[S]earch [N]eovim files" })
-
-			map("n", "<leader>fn", function()
-				builtin.find_files({ cwd = vim.fn.stdpath("config") })
-			end, { desc = "Find nvim config files" })
 
 			map("n", "<leader>fp", function()
 				builtin.find_files({ cwd = "~/projects" })

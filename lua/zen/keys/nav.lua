@@ -1,4 +1,5 @@
 local cmd = vim.cmd
+local fn = vim.fn
 local tbl_extend = vim.tbl_extend
 -- local validate = vim.validate
 local map = vim.keymap.set
@@ -44,6 +45,45 @@ map("n", "<C-[>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights" })
 ------------------------------------------------------------
 map("n", "J", "mzJ`z", { desc = "Join lines without moving cursor" })
 map("n", "<C-A-S-p>", "mzyyP`zk", { desc = "Duplicate line" })
+
+-- Quickfix / location list navigation
+------------------------------------------------------------
+map("n", "]q", function()
+	if fn.getqflist({ title = 0 }).title then
+		cmd.cnext()
+	end
+end, { desc = "Next quickfix item" })
+map("n", "[q", function()
+	if fn.getqflist({ title = 0 }).title then
+		cmd.cprevious()
+	end
+end, { desc = "Prev quickfix item" })
+map("n", "]l", cmd.lnext, { desc = "Next location item" })
+map("n", "[l", cmd.lprevious, { desc = "Prev location item" })
+
+-- Spelling navigation
+------------------------------------------------------------
+map("n", "]s", "]s", { desc = "Next spelling error" })
+map("n", "[s", "[s", { desc = "Prev spelling error" })
+map("n", "zg", "zg", { desc = "Add word to spellfile" })
+map("n", "zw", "zw", { desc = "Remove word from spellfile" })
+map("n", "z=", "z=", { desc = "Spelling suggestions" })
+
+-- Enhanced go-to-file
+------------------------------------------------------------
+map("n", "gf", function()
+	local cfile = vim.fn.expand("<cfile>")
+	if cfile ~= "" then
+		vim.cmd("find " .. cfile)
+	end
+end, { desc = "Go to file (with path search)" })
+map("n", "gF", function()
+	local cfile = vim.fn.expand("<cfile>")
+	local line = vim.fn.expand("<cWORD>"):match(":(%d+):?" or "")
+	if cfile ~= "" then
+		vim.cmd("find +" .. (line or 1) .. " " .. cfile)
+	end
+end, { desc = "Go to file + line" })
 
 -- Flash.nvim (lazy-safe)
 ------------------------------------------------------------
@@ -124,7 +164,6 @@ end, opts)
 map("n", "<leader>bl", cmd.ls, opts)
 map("n", "<leader>bn", cmd.bnext, opts)
 map("n", "<leader>bp", cmd.bprevious, opts)
-map("n", "<leader>bd", cmd.bdelete, opts)
 
 -- Tabs
 ------------------------------------------------------------

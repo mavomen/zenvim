@@ -55,6 +55,23 @@ else
 	env.PATH = mason_bin .. ":" .. env.PATH
 end
 
+-- Auto-cd to project root on buffer open
+local project_grp = vim.api.nvim_create_augroup("ProjectRoot", { clear = true })
+vim.api.nvim_create_autocmd("BufReadPost", {
+	group = project_grp,
+	callback = function()
+		local fname = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+		if fname == "" then
+			return
+		end
+		local root = require("zen.lsp.monorepo").find_monorepo_root(fname)
+		if root then
+			vim.fn.chdir(root)
+		end
+	end,
+	desc = "Auto-cd to project root",
+})
+
 -- Global wrapping defaults + per-window toggle
 opt_local.colorcolumn = "" -- no static colorcolumn marker by default
 
@@ -67,7 +84,7 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "WinNew" }, {
 		if w.__wrap_user_enabled then
 			wo.wrap = true
 			wo.linebreak = true
-			wo.colorcolumn = "120"
+			wo.colorcolumn = "80"
 		else
 			wo.wrap = false
 			wo.linebreak = false
@@ -88,7 +105,7 @@ local function toggle_wrap()
 		w.__wrap_user_enabled = true
 		wo.wrap = true
 		wo.linebreak = true
-		wo.colorcolumn = "135"
+		wo.colorcolumn = "80"
 		print("Wrap ON (sticky for this window)")
 	end
 end
@@ -148,6 +165,8 @@ opt.cmdheight = 1 -- command line height
 opt.showcmd = true -- show command in status line
 
 opt.smoothscroll = true -- smooth scrolling (if available)
+opt.diffopt = "internal,filler,closeoff,algorithm:histogram,indent-heuristic"
+opt.fillchars = { eob = " " }
 opt.undolevels = 1000 -- number of changes to undo
 opt.mouse = "a" -- enable mouse in all modes
 opt.mousefocus = true -- focus window when mouse is moved over it
