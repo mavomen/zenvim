@@ -2,7 +2,8 @@
 
 return {
 	{
-		"mavantgarderc/prismpunk.nvim",
+		dir = "~/projects/0-shelfs/CodeStorage/nvim-plugins/prismpunk.nvim",
+		name = "prismpunk.nvim",
 		lazy = false,
 		priority = 900,
 

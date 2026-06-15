@@ -89,4 +89,9 @@ return {
 			})
 		end,
 	},
+	{
+		"Decodetalkers/csharpls-extended-lsp.nvim",
+		dependencies = { "neovim/nvim-lspconfig" },
+		config = function() end,
+	},
 }

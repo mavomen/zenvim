@@ -10,7 +10,7 @@ return {
 			function()
 				require("conform").format({ async = true, lsp_fallback = true })
 			end,
-			mode = "",
+			mode = { "n", "v" },
 			desc = "Format buffer",
 		},
 		{
@@ -18,7 +18,7 @@ return {
 			function()
 				require("conform").format({ async = true, lsp_fallback = true })
 			end,
-			mode = "",
+			mode = { "n", "v" },
 			desc = "Format buffer",
 		},
 	},
@@ -55,12 +55,21 @@ return {
 			prettier = {
 				command = "prettier",
 			},
+			rustfmt = {
+				command = "rustfmt",
+				stdin = true,
+			},
 		},
 
-		format_on_save = {
-			timeout_ms = 500,
-			lsp_fallback = true,
-		},
+		format_on_save = function(bufnr)
+			if vim.api.nvim_buf_line_count(bufnr) > 5000 then
+				return
+			end
+
+			return {
+				timeout_ms = 500,
+				lsp_fallback = true,
+			}
+		end,
 	},
 }
-

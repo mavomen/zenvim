@@ -1,10 +1,6 @@
 local M = {}
 
 function M.setup(capabilities)
-	if #vim.api.nvim_list_uis() == 0 then
-		return
-	end
-
 	vim.lsp.config("rust_analyzer", {
 		capabilities = capabilities,
 
@@ -15,23 +11,38 @@ function M.setup(capabilities)
 
 		settings = {
 			["rust-analyzer"] = {
-				checkOnSave = {
+				check = {
 					command = "clippy",
 				},
+
 				cargo = {
 					buildScripts = {
 						enable = true,
 					},
+					allFeatures = true,
 				},
+
+				procMacro = {
+					enable = true,
+				},
+
 				imports = {
 					granularity = {
 						group = "module",
 					},
 					prefix = "self",
 				},
+
 				inlayHints = {
-					chainingHints = true,
-					parameterHints = true,
+					chainingHints = {
+						enable = true,
+					},
+					parameterHints = {
+						enable = true,
+					},
+					typeHints = {
+						enable = true,
+					},
 				},
 			},
 		},
@@ -69,6 +80,13 @@ function M.extend(client, bufnr)
 			end
 		end, bufnr)
 	end, vim.tbl_extend("force", opts, { desc = "Reload workspace (Rust)" }))
+
+	vim.keymap.set("n", "<leader>rt", function()
+		client:request("rust-analyzer/runSingle", {
+			textDocument = vim.lsp.util.make_text_document_params(),
+			position = vim.api.nvim_win_get_cursor(0),
+		})
+	end, vim.tbl_extend("force", opts, { desc = "Run test (Rust)" }))
 end
 
 return M

@@ -16,4 +16,4 @@ require("lazy").setup({
 	{ import = "zen.plugins" },
 })
 
-vim.cmd.colorscheme("norse-yggdrasill-ratatoskr")
+vim.cmd.colorscheme("kanagawa-paper-crimson")
