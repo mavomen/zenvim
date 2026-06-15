@@ -12,14 +12,6 @@ function M.setup(capabilities)
 	vim.lsp.handlers["textDocument/definition"] = require("csharpls_extended").handler
 	vim.lsp.handlers["textDocument/typeDefinition"] = require("csharpls_extended").handler
 
-	vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded", max_width = 80 })
-
-	vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-		border = "rounded",
-		focusable = false,
-		silent = true,
-	})
-
 	vim.lsp.handlers["workspace/symbol"] = function(_, result, ctx, config)
 		local ok, _ = pcall(require, "telescope.builtin")
 		if ok then

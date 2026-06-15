@@ -45,8 +45,8 @@ function M.enable(bufnr)
 	local started = false
 
 	for _, client in ipairs(clients) do
-		if client.supports_method("textDocument/semanticTokens/full") then
-			vim.lsp.semantic_tokens.start(bufnr, client.id)
+		if client:supports_method("textDocument/semanticTokens/full") then
+			vim.lsp.semantic_tokens.enable(true, { bufnr = bufnr })
 
 			state.client_tokens[bufnr] = state.client_tokens[bufnr] or {}
 			state.client_tokens[bufnr][client.id] = true
@@ -176,7 +176,7 @@ function M.setup(opts)
 		group = group,
 		callback = function(ev)
 			local client = vim.lsp.get_client_by_id(ev.data.client_id)
-			if not client or not client.supports_method("textDocument/semanticTokens/full") then
+			if not client or not client:supports_method("textDocument/semanticTokens/full") then
 				return
 			end
 

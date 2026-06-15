@@ -720,6 +720,27 @@ vim.api.nvim_create_autocmd("LspDetach", {
 	end,
 })
 
+function M.check()
+	vim.health.start("zen.lsp")
+
+	local clients = vim.lsp.get_clients()
+	vim.health.info(string.format("Active LSP clients: %d", #clients))
+	for _, c in ipairs(clients) do
+		vim.health.ok(string.format("%s (id: %d, root: %s)", c.name, c.id, c.config.root_dir or "N/A"))
+	end
+
+	local reg_count = #vim.tbl_keys(dynamic.registry or {})
+	vim.health.info(string.format("Registered dynamic servers: %d", reg_count))
+	for name in pairs(dynamic.registry or {}) do
+		local active = dynamic.active and dynamic.active[name]
+		if active then
+			vim.health.ok(string.format("%s — registered, active", name))
+		else
+			vim.health.info(string.format("%s — registered", name))
+		end
+	end
+end
+
 -- Commands & keymap
 vim.api.nvim_create_user_command("LspHealth", function()
 	M.open()

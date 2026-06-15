@@ -32,7 +32,7 @@ local function refresh(bufnr)
 		return
 	end
 
-	vim.lsp.codelens.refresh({ bufnr = bufnr })
+	vim.lsp.codelens.enable(true, { bufnr = bufnr })
 end
 
 -- ── Per-buffer enable/disable ────────────────────────────────────

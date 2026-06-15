@@ -18,7 +18,7 @@ local commands_registered = false
 local function has_inlay_hint_support(bufnr)
 	local clients = vim.lsp.get_clients({ bufnr = bufnr })
 	for _, c in ipairs(clients) do
-		if c.supports_method("textDocument/inlayHint") then
+		if c:supports_method("textDocument/inlayHint") then
 			return true
 		end
 	end
