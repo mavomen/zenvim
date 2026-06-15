@@ -36,7 +36,7 @@ end
 
 -- Latency probe
 function M.probe_latency(client)
-	if not client or not client.supports_method("textDocument/hover") then
+	if not client or not client:supports_method("textDocument/hover") then
 		return
 	end
 

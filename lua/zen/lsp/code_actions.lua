@@ -120,7 +120,7 @@ function M.execute(entry, bufnr)
 			return
 		end
 
-		if not client.supports_method("codeAction/resolve") then
+		if not client:supports_method("codeAction/resolve") then
 			vim.notify("Selected client does not support codeAction/resolve", vim.log.levels.WARN)
 			return
 		end
