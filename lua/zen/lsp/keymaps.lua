@@ -115,10 +115,6 @@ function M.setup()
 		return
 	end
 
-	require("zen.lsp.toggle").setup()
-	require("zen.lsp.info").setup()
-	require("zen.lsp.analytics").setup()
-
 	-- ╔══════════════════════════════════════════════════════════════╗
 	-- ║  GLOBAL KEYMAPS (no LspAttach required)                     ║
 	-- ╚══════════════════════════════════════════════════════════════╝

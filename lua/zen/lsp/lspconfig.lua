@@ -20,7 +20,6 @@ local servers = {
 	"sqls",
 	"postgres_lsp",
 	"flux_lsp",
-	"sql",
 }
 
 -- Registry of loaded extenders
@@ -45,6 +44,7 @@ end
 local function resolve_server(server)
 	local base = {
 		capabilities = capabilities,
+		on_attach = require("zen.lsp.shared").on_attach,
 	}
 
 	local ok, mod = pcall(require, "zen.lsp.servers." .. server)
@@ -118,6 +118,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		if not client then
 			return
 		end
+
+		require("zen.lsp.shared").on_attach(client, args.buf)
 
 		local ext = extenders[client.name]
 		if ext then

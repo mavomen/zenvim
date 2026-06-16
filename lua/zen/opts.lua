@@ -55,7 +55,7 @@ else
 	env.PATH = mason_bin .. ":" .. env.PATH
 end
 
--- Auto-cd to project root on buffer open
+-- Auto-cd to git root (deferred, .git-only)
 local project_grp = vim.api.nvim_create_augroup("ProjectRoot", { clear = true })
 vim.api.nvim_create_autocmd("BufReadPost", {
 	group = project_grp,
@@ -64,12 +64,14 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 		if fname == "" then
 			return
 		end
-		local root = require("zen.lsp.monorepo").find_monorepo_root(fname)
-		if root then
-			vim.fn.chdir(root)
-		end
+		vim.defer_fn(function()
+			local git = vim.fs.find(".git", { upward = true, path = vim.fs.dirname(fname), limit = 1, type = "directory" })
+			if #git > 0 then
+				vim.fn.chdir(vim.fs.dirname(git[1]))
+			end
+		end, 100)
 	end,
-	desc = "Auto-cd to project root",
+	desc = "Auto-cd to git root (deferred)",
 })
 
 -- Global wrapping defaults + per-window toggle
