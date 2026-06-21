@@ -49,7 +49,7 @@ return {
 		"mavantgarderc/raphael.nvim",
 		event = "UIEnter",
 		opts = {
-			default_theme = "kanagawa-paper-crimson",
+			-- default_theme = "kanagawa-paper-crimson",
 			enable_picker = true,
 			bookmark_group = true,
 			recent_group = false,
