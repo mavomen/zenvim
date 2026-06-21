@@ -13,7 +13,6 @@ local servers = {
 	"graphql",
 	"html",
 	"jsonls",
-	"texlab",
 	"yamlls",
 
 	"sqlls",
