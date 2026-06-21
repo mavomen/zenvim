@@ -127,7 +127,7 @@ local function setup_autocmds()
 		group = _augroup,
 		callback = function(args)
 			local bufnr = args.buf
-			local client = vim.lsp.get_client_by_id(args.data.client_id)
+			local client = vim.lsp.get_clients({ id = args.data.client_id })[1]
 			if client and client.server_capabilities.codeLensProvider then
 				-- default to enabled unless user explicitly disabled
 				if _enabled[bufnr] == nil then

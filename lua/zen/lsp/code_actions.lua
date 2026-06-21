@@ -59,7 +59,7 @@ function M.gather(bufnr, callback)
 
 		for client_id, resp in pairs(results or {}) do
 			if resp.result then
-				local client = vim.lsp.get_client_by_id(client_id)
+				local client = vim.lsp.get_clients({ id = client_id })[1]
 				local name = client and client.name or tostring(client_id)
 				for _, action in ipairs(resp.result) do
 					table.insert(entries, {
@@ -111,7 +111,7 @@ end
 function M.execute(entry, bufnr)
 	bufnr = bufnr or vim.api.nvim_get_current_buf()
 	local action = entry.action
-	local client = entry.client_id and vim.lsp.get_client_by_id(entry.client_id) or nil
+	local client = entry.client_id and vim.lsp.get_clients({ id = entry.client_id })[1] or nil
 
 	-- Resolve if needed
 	if not action.edit and not action.command then
@@ -145,7 +145,7 @@ end
 ---@param bufnr number
 ---@param client_id integer|nil
 function M._apply_action(action, bufnr, client_id)
-	local client = client_id and vim.lsp.get_client_by_id(client_id) or nil
+	local client = client_id and vim.lsp.get_clients({ id = client_id })[1] or nil
 
 	if action.edit then
 		vim.lsp.util.apply_workspace_edit(action.edit, client and client.offset_encoding or "utf-8")

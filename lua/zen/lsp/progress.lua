@@ -136,7 +136,7 @@ local function handle_progress(result, client_id)
 		return
 	end
 
-	local client = vim.lsp.get_client_by_id(client_id)
+	local client = vim.lsp.get_clients({ id = client_id })[1]
 	local client_name = client and client.name or ("client_" .. client_id)
 
 	local now = vim.uv.hrtime() / 1e6 -- ms

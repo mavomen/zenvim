@@ -41,7 +41,7 @@ local function navigate(result, opts)
 	end
 
 	if use_peek then
-		local peek_ok, peek = pcall(require, "lsp.definition_peek")
+		local peek_ok, peek = pcall(require, "zen.lsp.definition_peek")
 		if peek_ok and peek.setup then
 			peek.setup({ border = config.border })
 		end

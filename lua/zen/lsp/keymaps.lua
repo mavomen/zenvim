@@ -89,7 +89,7 @@ local function restart_buffer_clients(bufnr)
 	local clients = vim.lsp.get_clients({ bufnr = bufnr })
 	for _, c in ipairs(clients) do
 		local name = c.name
-		vim.lsp.stop_client(c.id, true)
+		c:stop(true)
 		vim.defer_fn(function()
 			vim.cmd("LspStart " .. name)
 		end, 500)
@@ -134,7 +134,7 @@ function M.setup()
 	map_if_absent("n", "<leader>ru", ":RenameUndo<CR>", { desc = "Undo rename" })
 	map_if_absent("n", "<leader>rh", ":RenameHistory<CR>", { desc = "Rename history" })
 	map_if_absent("n", "<leader>ri", ":RenameSummary<CR>", { desc = "Rename summary" })
-	map_if_absent("n", "grr", ":LspRefFind<CR>", { desc = "Find references" })
+	vim.keymap.set("n", "grr", ":LspRefFind<CR>", { desc = "Find references" })
 	map_if_absent("n", "grs", ":LspRefSummary<CR>", { desc = "Reference summary" })
 	map_if_absent("n", "<leader>dS", ":DiagSummary<CR>", { desc = "Diagnostics summary" })
 	map_if_absent("n", "<leader>ds", focus_current_diagnostics_package, { desc = "Current package diagnostics" })
@@ -452,7 +452,7 @@ function M.setup()
 				vim.lsp.buf.code_action()
 			end, o("Code actions"))
 			map_if_absent("v", "<leader>ca", function()
-				vim.lsp.buf.range_code_action()
+				vim.lsp.buf.code_action({ range = true })
 			end, o("Range code actions"))
 			map_if_absent("n", "<leader>gra", function()
 				require("telescope").extensions.lsp.code_actions()
@@ -864,7 +864,7 @@ function M.setup()
 					end
 					for _, c in ipairs(clients) do
 						if c.name == choice then
-							vim.lsp.stop_client(c.id, true)
+							c:stop(true)
 							vim.defer_fn(function()
 								vim.cmd("LspStart " .. choice)
 								vim.notify("Restarted: " .. choice, vim.log.levels.INFO)
@@ -895,7 +895,7 @@ function M.setup()
 					end
 					for _, c in ipairs(clients) do
 						if c.name == choice then
-							vim.lsp.stop_client(c.id, true)
+							c:stop(true)
 							vim.notify("Stopped: " .. choice, vim.log.levels.INFO)
 							break
 						end

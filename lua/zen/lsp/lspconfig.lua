@@ -1,4 +1,6 @@
 local capabilities = require("zen.lsp.shared").capabilities
+require("zen.lsp.filetypes")
+local state = require("zen.lsp.state")
 
 local servers = {
 	"pyright",
@@ -120,12 +122,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("LspExtenders", { clear = true }),
 	desc = "Fire per-language extend() hooks",
 	callback = function(args)
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		local client = vim.lsp.get_clients({ id = args.data.client_id })[1]
 		if not client then
 			return
 		end
 
 		require("zen.lsp.shared").on_attach(client, args.buf)
+		state.register(client, args.buf)
 
 		local ext = extenders[client.name]
 		if ext then

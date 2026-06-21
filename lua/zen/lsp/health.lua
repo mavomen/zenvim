@@ -16,7 +16,7 @@ local hl_ns = vim.api.nvim_create_namespace("lsp_health")
 local orig_err_handler = vim.lsp.handlers["window/showMessage"]
 vim.lsp.handlers["window/showMessage"] = function(err, result, ctx, config)
 	if result and result.type == 1 then
-		local client = vim.lsp.get_client_by_id(ctx.client_id)
+		local client = vim.lsp.get_clients({ id = ctx.client_id })[1]
 		local name = client and client.name or ("id:" .. ctx.client_id)
 		M.errors[name] = M.errors[name] or {}
 		table.insert(M.errors[name], {
@@ -626,7 +626,7 @@ function M.action_start_cursor()
 	if dynamic.try_spawn then
 		dynamic.try_spawn(name, vim.api.nvim_get_current_buf())
 	else
-		local ok_cfg, custom = pcall(require, "lsp.servers." .. name)
+		local ok_cfg, custom = pcall(require, "zen.lsp.servers." .. name)
 		local opts = (ok_cfg and type(custom) == "table") and custom or {}
 		opts.capabilities = require("zen.lsp.shared").capabilities
 		vim.lsp.config(name, opts)
@@ -701,7 +701,7 @@ end
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("lsp_health_attach", { clear = true }),
 	callback = function(args)
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		local client = vim.lsp.get_clients({ id = args.data.client_id })[1]
 		if client and not M.start_times[client.name] then
 			M.start_times[client.name] = os.time()
 		end
@@ -712,7 +712,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.api.nvim_create_autocmd("LspDetach", {
 	group = vim.api.nvim_create_augroup("lsp_health_detach", { clear = true }),
 	callback = function(args)
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		local client = vim.lsp.get_clients({ id = args.data.client_id })[1]
 		if client then
 			M.start_times[client.name] = nil
 		end

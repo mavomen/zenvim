@@ -116,7 +116,7 @@ function M.status(bufnr)
 	local active_clients = {}
 	if state.client_tokens[bufnr] then
 		for client_id in pairs(state.client_tokens[bufnr]) do
-			local client = vim.lsp.get_client_by_id(client_id)
+			local client = vim.lsp.get_clients({ id = client_id })[1]
 			if client then
 				table.insert(active_clients, client.name)
 			end
@@ -175,7 +175,7 @@ function M.setup(opts)
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = group,
 		callback = function(ev)
-			local client = vim.lsp.get_client_by_id(ev.data.client_id)
+			local client = vim.lsp.get_clients({ id = ev.data.client_id })[1]
 			if not client or not client:supports_method("textDocument/semanticTokens/full") then
 				return
 			end
