@@ -1,4 +1,7 @@
-return {
+local M = {}
+
+M.config = {
+	cmd = { "pyright-langserver", "--stdio" },
 	settings = {
 		python = {
 			analysis = {
@@ -7,3 +10,5 @@ return {
 		},
 	},
 }
+
+return M

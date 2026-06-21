@@ -5,9 +5,8 @@ function M.setup(capabilities)
 		return
 	end
 
-	-- Postgres LSP
-	-- ----------------------------
 	vim.lsp.config("postgres_lsp", {
+		cmd = { "postgres_lsp" },
 		capabilities = capabilities,
 		filetypes = { "sql", "pgsql", "plpgsql" },
 		settings = {
@@ -18,9 +17,8 @@ function M.setup(capabilities)
 		},
 	})
 
-	-- SQL Server (T-SQL)
-	-- ----------------------------
 	vim.lsp.config("sqlls", {
+		cmd = { "sql-language-server", "up", "--method", "stdio" },
 		capabilities = capabilities,
 		filetypes = { "sql", "tsql" },
 		root_dir = vim.fs.root(0, { ".git" }),
@@ -34,6 +32,7 @@ function M.setup(capabilities)
 	})
 
 	vim.lsp.config("flux_lsp", {
+		cmd = { "flux-lsp" },
 		capabilities = capabilities,
 		filetypes = { "flux" },
 		settings = {
@@ -51,9 +50,8 @@ function M.setup(capabilities)
 		end,
 	})
 
-	-- SQLs (generic SQL langserver)
-	-- ----------------------------
 	vim.lsp.config("sqls", {
+		cmd = { "sqls" },
 		capabilities = capabilities,
 		filetypes = { "sql", "plsql", "oracle" },
 		settings = {
@@ -63,13 +61,13 @@ function M.setup(capabilities)
 		},
 	})
 
-	vim.lsp.enable("postgres_lsp")
-	vim.lsp.enable("sqlls")
-	vim.lsp.enable("sqls")
-	vim.lsp.enable("flux_lsp")
+	for _, name in ipairs({ "postgres_lsp", "sqlls", "sqls", "flux_lsp" }) do
+		if vim.fn.executable(name) == 1 then
+			vim.lsp.enable(name)
+		end
+	end
 end
 
--- ── Dynamic DB Connection Injection ───────────────────────────────
 function M.setup_database_connection(kind, connection_config)
 	local clients = vim.lsp.get_clients({ name = kind })
 	if not clients or #clients == 0 then
@@ -86,14 +84,12 @@ function M.setup_database_connection(kind, connection_config)
 		client.config.settings.sql.connections = client.config.settings.sql.connections or {}
 		table.insert(client.config.settings.sql.connections, connection_config)
 	elseif kind == "postgres_lsp" then
-		-- postgres_lsp uses a single connection, overwrite
 		client.config.settings.postgres.connection = connection_config
 	else
 		vim.notify("Unsupported SQL LSP kind: " .. tostring(kind), vim.log.levels.WARN)
 		return false
 	end
 
-	-- Notify the server of the config change, then restart
 	client:notify("workspace/didChangeConfiguration", { settings = client.config.settings })
 	vim.lsp.stop_client(client.id)
 	vim.defer_fn(function()
@@ -103,7 +99,6 @@ function M.setup_database_connection(kind, connection_config)
 	return true
 end
 
--- ── Format helper ─────────────────────────────────────────────────
 local sql_server_names = { "sqlls", "sqls", "postgres_lsp" }
 
 function M.format_sql(bufnr)
@@ -116,25 +111,18 @@ function M.format_sql(bufnr)
 	})
 end
 
--- ── Extender (micro-plugin) ──────────────────────────────────────
--- Fires per-buffer on every LspAttach for any SQL-family server
 function M.extend(client, bufnr)
 	local opts = { buffer = bufnr, silent = true }
 
-	-- Guard: only set up once per buffer (first SQL server wins)
 	if vim.b[bufnr]._sql_extend_done then
 		return
 	end
 	vim.b[bufnr]._sql_extend_done = true
 
-	-- ── Keymaps ───────────────────────────────────────────────────
-
-	-- Format
 	vim.keymap.set("n", "<leader>sf", function()
 		M.format_sql(bufnr)
 	end, vim.tbl_extend("force", opts, { desc = "Format SQL" }))
 
-	-- Show active SQL connections
 	vim.keymap.set("n", "<leader>sc", function()
 		local lines = {}
 		for _, name in ipairs(sql_server_names) do
@@ -165,7 +153,6 @@ function M.extend(client, bufnr)
 		})
 	end, vim.tbl_extend("force", opts, { desc = "Show SQL connections" }))
 
-	-- Quick connect (interactive)
 	vim.keymap.set("n", "<leader>sC", function()
 		vim.ui.select({ "sqls", "sqlls", "postgres_lsp" }, { prompt = "Target server:" }, function(kind)
 			if not kind then
@@ -191,7 +178,6 @@ function M.extend(client, bufnr)
 							if kind == "postgres_lsp" then
 								conn = { host = host, port = port, dbname = dbname, user = user }
 							else
-								-- sqls / sqlls style
 								conn = {
 									driver = "postgresql",
 									dataSourceName = string.format(
@@ -217,7 +203,6 @@ function M.extend(client, bufnr)
 		end)
 	end, vim.tbl_extend("force", opts, { desc = "Connect to database (interactive)" }))
 
-	-- Switch between SQL servers active on this buffer
 	vim.keymap.set("n", "<leader>ss", function()
 		local active = vim.lsp.get_clients({ bufnr = bufnr })
 		local sql_clients = vim.tbl_filter(function(c)
@@ -237,13 +222,11 @@ function M.extend(client, bufnr)
 			if not choice then
 				return
 			end
-			-- Move chosen server to front of filter priority
 			vim.b[bufnr]._sql_primary = choice
 			vim.notify("Primary SQL server: " .. choice, vim.log.levels.INFO)
 		end)
 	end, vim.tbl_extend("force", opts, { desc = "Select primary SQL server" }))
 
-	-- Execute selection / current statement (sqls-specific)
 	vim.keymap.set("v", "<leader>se", function()
 		local clients = vim.lsp.get_clients({ bufnr = bufnr, name = "sqls" })
 		if #clients == 0 then
@@ -268,8 +251,6 @@ function M.extend(client, bufnr)
 			end
 		end, bufnr)
 	end, vim.tbl_extend("force", opts, { desc = "Execute SQL selection (sqls)" }))
-
-	-- ── Buffer-local commands ─────────────────────────────────────
 
 	vim.api.nvim_buf_create_user_command(bufnr, "SqlFormat", function()
 		M.format_sql(bufnr)

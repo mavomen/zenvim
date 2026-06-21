@@ -1,6 +1,7 @@
 local M = {}
 
 M.config = {
+	cmd = { "gopls" },
 	settings = {
 		gopls = {
 			analyses = {

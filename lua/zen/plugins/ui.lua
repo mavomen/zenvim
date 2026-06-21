@@ -208,24 +208,21 @@ return {
 		opts = {
 			enabled = true,
 			highlight = { link = "Visual", default = true },
+			show_eol = true,
 			match_types = {
 				space = true,
-				tab = true,
-				nbsp = true,
+				tab = false,
+				nbsp = false,
 				lead = false,
 				trail = false,
 			},
 			list_chars = {
 				space = "·",
-				tab = "↦",
-				nbsp = "␣",
-				lead = "‹",
-				trail = "›",
 			},
 			fileformat_chars = {
-				unix = "↲",
-				mac = "←",
-				dos = "↙",
+				unix = "↲", -- LF
+				mac = "←", -- CR
+				dos = "↙", -- CRLF
 			},
 			ignore = { filetypes = {}, buftypes = {} },
 		},

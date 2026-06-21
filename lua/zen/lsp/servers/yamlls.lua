@@ -1,6 +1,7 @@
 local M = {}
 
 M.config = {
+	cmd = { "yaml-language-server", "--stdio" },
 	settings = {
 		yaml = {
 			validate = true,

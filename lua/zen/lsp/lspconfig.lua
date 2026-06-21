@@ -7,6 +7,7 @@ local servers = {
 	"gopls",
 	"ts_ls",
 	"lua_ls",
+	"bashls",
 
 	"cssls",
 	"dockerls",
@@ -15,10 +16,7 @@ local servers = {
 	"jsonls",
 	"yamlls",
 
-	"sqlls",
-	"sqls",
-	"postgres_lsp",
-	"flux_lsp",
+	"sql",
 }
 
 -- Registry of loaded extenders

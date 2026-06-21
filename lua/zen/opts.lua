@@ -137,13 +137,13 @@ o.guicursor = "n-v-c:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr:hor2
 
 o.list = true -- show whitespace characters according to 'listchars'
 opt.autoread = true -- auto read file if changed outside vim
-
+opt.listchars:append({ tab = "  " })   -- two spaces → visually nothing
 -- Symbols used to represent whitespace when 'list' is on
-opt.listchars = {
-	tab = "» ", -- show tabs as » plus a space
-	trail = "·", -- show trailing spaces as ·
-	nbsp = "␣", -- show non-breaking spaces as ␣
-}
+-- opt.listchars = {
+-- 	tab = "» ", -- show tabs as » plus a space
+-- 	trail = "·", -- show trailing spaces as ·
+-- 	nbsp = "␣", -- show non-breaking spaces as ␣
+-- }
 
 opt.wrap = false -- don't soft-wrap by default in general
 opt.swapfile = false -- disable swap files (less clutter, more risk if crash)

@@ -1,6 +1,7 @@
 local M = {}
 
 M.config = {
+	cmd = { "lua-language-server" },
 	on_attach = function(client)
 		-- disable formatting (use stylua or external formatter)
 		client.server_capabilities.documentFormattingProvider = false
