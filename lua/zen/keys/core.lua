@@ -21,6 +21,8 @@ end, { desc = "Replace word under cursor interactively" })
 
 map("n", "<leader>pv", "<cmd>Oil<CR>", { desc = "Open Oil" })
 
+vim.keymap.set("i", "jk", "<esc>")
+
 map("n", "<leader>foo", function()
 	require("oil").open(vim.fn.getcwd())
 end, { desc = "Open Oil in cwd" })

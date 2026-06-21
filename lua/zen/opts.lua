@@ -65,7 +65,8 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 			return
 		end
 		vim.defer_fn(function()
-			local git = vim.fs.find(".git", { upward = true, path = vim.fs.dirname(fname), limit = 1, type = "directory" })
+			local git =
+				vim.fs.find(".git", { upward = true, path = vim.fs.dirname(fname), limit = 1, type = "directory" })
 			if #git > 0 then
 				vim.fn.chdir(vim.fs.dirname(git[1]))
 			end
@@ -177,3 +178,11 @@ opt.selectmode = "mouse,key" -- selection mode
 opt.modeline = true -- enable modeline
 opt.modelines = 5 -- number of lines to check for modeline
 vim.opt.showmode = false
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking text object",
+	group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank()
+	end,
+})
