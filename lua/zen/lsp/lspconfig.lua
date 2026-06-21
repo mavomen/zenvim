@@ -98,11 +98,20 @@ local function resolve_server(server)
 	return opts
 end
 
+local function cmd_available(config)
+	local cmd = config and config.cmd
+	if cmd then
+		local bin = type(cmd) == "table" and cmd[1] or cmd
+		return vim.fn.executable(bin) == 1
+	end
+	return true
+end
+
 -- Unified loader
 for _, server in ipairs(servers) do
 	local config = resolve_server(server)
 
-	if config then
+	if config and cmd_available(config) then
 		vim.lsp.config(server, config)
 		vim.lsp.enable(server)
 	end

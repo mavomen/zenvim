@@ -1,6 +1,9 @@
 local M = {}
 
 function M.setup(capabilities)
+	if vim.fn.executable("docker-langserver") ~= 1 then
+		return
+	end
 	vim.lsp.config("dockerls", {
 		capabilities = capabilities,
 

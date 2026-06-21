@@ -1,5 +1,10 @@
 vim.filetype.add({
 	extension = {
+		flux = "flux",
+		gotmpl = "gotmpl",
+		pgsql = "sql",
+		plpgsql = "sql",
+		tsql = "sql",
 		cs = "cs",
 		csx = "cs",
 		fs = "fsharp",
@@ -61,6 +66,11 @@ vim.filetype.add({
 	},
 
 	filename = {
+		["docker-compose.yml"] = "yaml.docker-compose",
+		["docker-compose.yaml"] = "yaml.docker-compose",
+		["compose.yml"] = "yaml.docker-compose",
+		["compose.yaml"] = "yaml.docker-compose",
+		[".gitlab-ci.yml"] = "yaml.gitlab",
 		["omnisharp.json"] = "json",
 		["global.json"] = "json",
 		["Nuget.config"] = "xml",
@@ -83,6 +93,8 @@ vim.filetype.add({
 	},
 
 	pattern = {
+		[".*/templates/.*%.yaml"] = "yaml.helm-values",
+		[".*/templates/.*%.tpl"] = "gotmpl",
 		["%.ipy%.nb$"] = "ipynb",
 		["conf/.+%.yaml"] = "yaml",
 		["build%.gradle$"] = "groovy",
