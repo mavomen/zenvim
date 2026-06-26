@@ -82,17 +82,22 @@ for k, pair in pairs(surrounds) do
 end
 
 -- Save / session
-------------------------------------------------------------
-map("n", "<leader>;w", function()
-	vim.cmd("wall")
-	local filetype = vim.bo.filetype
-	if filetype == "lua" then
-		vim.cmd("source %")
-		vim.notify(" 󱓎 ", vim.log.levels.INFO)
-	else
-		vim.notify(" 󱓎 ", vim.log.levels.INFO)
-	end
-	vim.cmd("mkview")
-end, { desc = "Save all; source if Lua" })
+
+map("n", ";w", function()
+  vim.cmd("wall")
+
+  local file = vim.fn.expand("%:p")
+  local config = vim.fs.normalize(vim.fn.stdpath("config"))
+  file = vim.fs.normalize(file)
+
+  if vim.bo.filetype == "lua" and vim.startswith(file, config) then
+    vim.cmd("source %")
+  end
+
+  vim.notify("󱓎", vim.log.levels.INFO)
+  vim.cmd("mkview")
+end, { desc = "Save all; source config Lua" })
 
 map("n", "<leader>;z", "ZZ", opts)
+
+map("n", "<leader>;q", "ZQ", opts)
