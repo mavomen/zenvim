@@ -64,7 +64,7 @@ map("n", "<leader>nd", function()
 	end)
 end, { desc = "Create new directory in Oil" })
 
--- Surround (manual, no plugin)
+-- Surround
 ------------------------------------------------------------
 local surrounds = {
 	["("] = "()",
@@ -82,22 +82,18 @@ for k, pair in pairs(surrounds) do
 end
 
 -- Save / session
-
 map("n", ";w", function()
   vim.cmd("wall")
-
-  local file = vim.fn.expand("%:p")
-  local config = vim.fs.normalize(vim.fn.stdpath("config"))
-  file = vim.fs.normalize(file)
-
-  if vim.bo.filetype == "lua" and vim.startswith(file, config) then
-    vim.cmd("source %")
-  end
-
-  vim.notify("󱓎", vim.log.levels.INFO)
+  vim.notify(" 󱓎", vim.log.levels.INFO)
   vim.cmd("mkview")
-end, { desc = "Save all; source config Lua" })
+end, { desc = "Save current buffer" })
 
 map("n", "<leader>;z", "ZZ", opts)
 
 map("n", "<leader>;q", "ZQ", opts)
+
+-- Markdown rendering toggle
+map("n", "<leader>;r", function()
+	vim.cmd("RenderMarkdown toggle")
+	vim.notify("RenderMarkdown toggled", vim.log.levels.INFO)
+end, { desc = "Toggle markdown rendering" })

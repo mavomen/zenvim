@@ -35,6 +35,29 @@ return {
 				xxx = { pattern = "%f[%w]()XXX()%f[%W]", group = "MiniHipatternsFixme" },
 				warning = { pattern = "%f[%w]()WARNING()%f[%W]", group = "MiniHipatternsHack" },
 				bug = { pattern = "%f[%w]()BUG()%f[%W]", group = "MiniHipatternsFixme" },
+				info = { pattern = "%f[%w]()INFO()%f[%W]", group = "MiniHipatternsInfo" },
+				abstract = { pattern = "%f[%w]()ABSTRACT()%f[%W]", group = "MiniHipatternsInfo" },
+				summary = { pattern = "%f[%w]()SUMMARY()%f[%W]", group = "MiniHipatternsInfo" },
+				tldr = { pattern = "%f[%w]()TLDR()%f[%W]", group = "MiniHipatternsInfo" },
+				success = { pattern = "%f[%w]()SUCCESS()%f[%W]", group = "MiniHipatternsSuccess" },
+				tip = { pattern = "%f[%w]()TIP()%f[%W]", group = "MiniHipatternsSuccess" },
+				hint = { pattern = "%f[%w]()HINT()%f[%W]", group = "MiniHipatternsSuccess" },
+				check = { pattern = "%f[%w]()CHECK()%f[%W]", group = "MiniHipatternsSuccess" },
+				done = { pattern = "%f[%w]()DONE()%f[%W]", group = "MiniHipatternsSuccess" },
+				important = { pattern = "%f[%w]()IMPORTANT()%f[%W]", group = "MiniHipatternsHint" },
+				example = { pattern = "%f[%w]()EXAMPLE()%f[%W]", group = "MiniHipatternsHint" },
+				question = { pattern = "%f[%w]()QUESTION()%f[%W]", group = "MiniHipatternsWarn" },
+				help = { pattern = "%f[%w]()HELP()%f[%W]", group = "MiniHipatternsWarn" },
+				faq = { pattern = "%f[%w]()FAQ()%f[%W]", group = "MiniHipatternsWarn" },
+				attention = { pattern = "%f[%w]()ATTENTION()%f[%W]", group = "MiniHipatternsWarn" },
+				caution = { pattern = "%f[%w]()CAUTION()%f[%W]", group = "MiniHipatternsError" },
+				failure = { pattern = "%f[%w]()FAILURE()%f[%W]", group = "MiniHipatternsError" },
+				danger = { pattern = "%f[%w]()DANGER()%f[%W]", group = "MiniHipatternsError" },
+				fail = { pattern = "%f[%w]()FAIL()%f[%W]", group = "MiniHipatternsError" },
+				missing = { pattern = "%f[%w]()MISSING()%f[%W]", group = "MiniHipatternsError" },
+				error = { pattern = "%f[%w]()ERROR()%f[%W]", group = "MiniHipatternsError" },
+				quote = { pattern = "%f[%w]()QUOTE()%f[%W]", group = "MiniHipatternsQuote" },
+				cite = { pattern = "%f[%w]()CITE()%f[%W]", group = "MiniHipatternsQuote" },
 
 				hex_color = hipatterns.gen_highlighter.hex_color({ style = "bg" }),
 
@@ -162,5 +185,17 @@ return {
 				},
 			},
 		})
+
+		-- Sync MiniHipatterns colors w/ render-markdown callout colors
+		vim.api.nvim_set_hl(0, "MiniHipatternsInfo",    { link = "RenderMarkdownInfo",    default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsSuccess", { link = "RenderMarkdownSuccess", default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsHint",    { link = "RenderMarkdownHint",    default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsWarn",    { link = "RenderMarkdownWarn",    default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsError",   { link = "RenderMarkdownError",   default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsQuote",   { link = "RenderMarkdownQuote",   default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsNote",    { link = "RenderMarkdownInfo",    default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsTodo",    { link = "RenderMarkdownInfo",    default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsHack",    { link = "RenderMarkdownWarn",    default = true })
+		vim.api.nvim_set_hl(0, "MiniHipatternsFixme",   { link = "RenderMarkdownError",   default = true })
 	end,
 }
