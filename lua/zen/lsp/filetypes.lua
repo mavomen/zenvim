@@ -63,6 +63,8 @@ vim.filetype.add({
 		proto = "proto",
 		thrift = "thrift",
 		capnp = "capnp",
+		mq5 = "mql5",
+		mqh = "mql5",
 	},
 
 	filename = {

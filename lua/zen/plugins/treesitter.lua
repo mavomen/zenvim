@@ -4,6 +4,31 @@ return {
 		build = ":TSUpdate",
 		event = { "BufReadPost", "BufNewFile" },
 		dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+		config = function(_, opts)
+			local parsers_ok, parsers = pcall(require, "nvim-treesitter.parsers")
+			if parsers_ok then
+				parsers.mql5 = {
+					install_info = {
+						url = "https://github.com/mskelton/tree-sitter-mql5",
+						revision = "main",
+						files = { "src/parser.c" },
+					},
+					tier = 3,
+				}
+			end
+
+			local ts_ok, ts_configs = pcall(require, "nvim-treesitter.configs")
+			if ts_ok then
+				ts_configs.setup(opts)
+			end
+
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "mql5",
+				callback = function(args)
+					pcall(vim.treesitter.start, args.buf, "mql5")
+				end,
+			})
+		end,
 		opts = {
 			ensure_installed = {
 				"lua",
@@ -25,6 +50,7 @@ return {
 				"regex",
 				"query",
 				"latex",
+				"mql5",
 			},
 
 			sync_install = true,

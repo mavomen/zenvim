@@ -19,6 +19,8 @@ local servers = {
 	"yamlls",
 
 	"sql",
+
+	"clangd",
 }
 
 -- Registry of loaded extenders
