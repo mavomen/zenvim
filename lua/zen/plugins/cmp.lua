@@ -7,6 +7,7 @@ return {
 		"hrsh7th/cmp-buffer",
 		"hrsh7th/cmp-path",
 		"hrsh7th/cmp-cmdline",
+		"ray-x/cmp-treesitter",
 
 		"L3MON4D3/LuaSnip",
 		"saadparwaiz1/cmp_luasnip",
@@ -24,6 +25,8 @@ return {
 		luasnip.filetype_extend("javascript", { "javascriptreact" })
 		luasnip.filetype_extend("typescript", { "typescriptreact" })
 
+		cmp.register_source("mql5", require("zen.cmp.mql5").new())
+
 		-- minimal icons (comment out if you hate icons entirely)
 		local icons = {
 			Text = "󰉿",
@@ -32,14 +35,20 @@ return {
 			Field = "󰜢",
 			Variable = "󰀫",
 			Class = "󰠱",
-			Interface = "",
+			Interface = "",
 			Property = "󰜢",
 			Value = "󰎠",
-			Snippet = "",
+			Enum = "",
+			EnumMember = "",
+			Keyword = "󰌋",
+			Snippet = "",
+			Color = "",
 			File = "󰈙",
 			Folder = "󰉋",
 			Operator = "󰆕",
-			Keyword = "󰌋",
+			Struct = "",
+			Event = "",
+			Constant = "",
 		}
 
 		cmp.setup({
@@ -85,6 +94,8 @@ return {
 			sources = cmp.config.sources({
 				{ name = "nvim_lsp" },
 				{ name = "luasnip" },
+				{ name = "mql5", keyword_length = 1 },
+				{ name = "treesitter" },
 				{ name = "buffer", keyword_length = 3 },
 				{ name = "path" },
 			}),
@@ -100,6 +111,8 @@ return {
 					item.menu = ({
 						nvim_lsp = "[LSP]",
 						luasnip = "[Snp]",
+						mql5 = "[MQL5]",
+						treesitter = "[TS]",
 						buffer = "[Buf]",
 						path = "[Path]",
 						cmdline = "[Cmd]",

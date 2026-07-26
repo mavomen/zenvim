@@ -5,6 +5,7 @@
   "cmp-cmdline": { "branch": "main", "commit": "d126061b624e0af6c3a556428712dd4d4194ec6d" },
   "cmp-nvim-lsp": { "branch": "main", "commit": "cbc7b02bb99fae35cb42f514762b89b5126651ef" },
   "cmp-path": { "branch": "main", "commit": "c642487086dbd9a93160e1679a1327be111cbc25" },
+  "cmp-treesitter": { "branch": "master", "commit": "958fcfa0d8ce46d215e19cc3992c542f576c4123" },
   "cmp_luasnip": { "branch": "master", "commit": "98d9cb5c2c38532bd9bdb481067b20fea8f32e90" },
   "conform.nvim": { "branch": "master", "commit": "dca1a190aa85f9065979ef35802fb77131911106" },
   "flash.nvim": { "branch": "main", "commit": "fcea7ff883235d9024dc41e638f164a450c14ca2" },
